@@ -1,0 +1,105 @@
+From 451ec1ff50c54fe7d1dab81e2656ad184b759873 Mon Sep 17 00:00:00 2001
+From: hzy <hzyitc@outlook.com>
+Date: Fri, 17 Mar 2023 20:33:35 +0000
+Subject: [PATCH 1/1] ath11k: Fix some build and runtime issues for mainline
+ kernel
+
+Signed-off-by: hzy <hzyitc@outlook.com>
+---
+ drivers/net/wireless/ath/ath11k/ahb.c      | 13 -------------
+ drivers/net/wireless/ath/ath11k/core.c     |  9 ++-------
+ drivers/net/wireless/ath/ath11k/coredump.c | 15 +--------------
+ 3 files changed, 3 insertions(+), 34 deletions(-)
+
+diff --git a/drivers/net/wireless/ath/ath11k/ahb.c b/drivers/net/wireless/ath/ath11k/ahb.c
+index ece2ecf..03e3064 100644
+--- a/drivers/net/wireless/ath/ath11k/ahb.c
++++ b/drivers/net/wireless/ath/ath11k/ahb.c
+@@ -791,25 +791,12 @@ static int ath11k_ahb_map_service_to_pipe(struct ath11k_base *ab, u16 service_id
+ #ifdef CONFIG_QCOM_QMI_HELPERS
+ static void ath11k_ahb_ssr_notifier_reg(struct ath11k_base *ab)
+ {
+-#if LINUX_VERSION_IS_LESS(5, 4, 0)
+ 	qcom_register_ssr_notifier(&ab->qmi.ssr_nb);
+-#else
+-	struct ath11k_ahb *ab_ahb = ath11k_ahb_priv(ab);
+-	rproc_register_subsys_notifier(ab_ahb->tgt_rproc->name,
+-				       &ab->qmi.ssr_nb.notifier_call, NULL);
+-#endif
+ }
+ 
+ static void ath11k_ahb_ssr_notifier_unreg(struct ath11k_base *ab)
+ {
+-#if LINUX_VERSION_IS_LESS(5, 4, 0)
+ 	qcom_unregister_ssr_notifier(&ab->qmi.ssr_nb);
+-#else
+-	struct ath11k_ahb *ab_ahb = ath11k_ahb_priv(ab);
+-	rproc_unregister_subsys_notifier(ab_ahb->tgt_rproc->name,
+-					 &ab->qmi.ssr_nb.notifier_call,
+-					 NULL);
+-#endif
+ }
+ #endif
+ 
+diff --git a/drivers/net/wireless/ath/ath11k/core.c b/drivers/net/wireless/ath/ath11k/core.c
+index 399aca5..a6c1f90 100644
+--- a/drivers/net/wireless/ath/ath11k/core.c
++++ b/drivers/net/wireless/ath/ath11k/core.c
+@@ -1256,20 +1256,15 @@ int ath11k_core_ssr_notifier_cb(struct notifier_block *nb, unsigned long event,
+ 	phandle rproc_phandle;
+ 	struct device_node *rproc_node = NULL;
+ 	struct platform_device *pdev = NULL;
+-	struct platform_device *ssr_pdev = (struct platform_device *)data;
++	const char *ssr_name = (const char *)data;
+ #endif
+ 
+ 	if (test_bit(ATH11K_FLAG_FW_RESTART_FOR_HOST, &qmi->ab->dev_flags)) {
+ 		return 0;
+ 	}
+ 
+-#if LINUX_VERSION_IS_GEQ(5,4,0)
+-	if (event != SUBSYS_RAMDUMP_NOTIFICATION)
+-		return 0;
+-#else
+ 	if (!test_bit(ATH11K_FLAG_REGISTERED, &ab->dev_flags))
+ 		return 0;
+-#endif
+ 
+ 	/* Print the stats only if notification is received for expected PD*/
+ 	multi_pd_arch = of_property_read_bool(dev->of_node, "qcom,multipd_arch");
+@@ -1294,7 +1289,7 @@ int ath11k_core_ssr_notifier_cb(struct notifier_block *nb, unsigned long event,
+ 			ath11k_warn(ab, "Failed to get pdev from device node\n");
+ 			return 0;
+ 		}
+-		if (strcmp(ssr_pdev->name, pdev->name) != 0) {
++		if (strcmp(ssr_name, pdev->name) != 0) {
+ 			ath11k_warn(ab, "SSR notification mismatch %s  pdev name:%s\n",
+ 				    (char *)data, pdev->name);
+ 			return 0;
+diff --git a/drivers/net/wireless/ath/ath11k/coredump.c b/drivers/net/wireless/ath/ath11k/coredump.c
+index e3c0be9..6c52a79 100644
+--- a/drivers/net/wireless/ath/ath11k/coredump.c
++++ b/drivers/net/wireless/ath/ath11k/coredump.c
+@@ -377,18 +377,5 @@ out:
+ int ath11k_coredump_mhi_update_bhie_table(struct ath11k_base *ab, void *va,
+ 					  phys_addr_t pa, size_t size)
+ {
+-
+-	struct ath11k_pci *ar_pci = (struct ath11k_pci *)ab->drv_priv;
+-	struct mhi_controller *mhi_ctrl = ar_pci->mhi_ctrl;
+-	int ret;
+-
+-	/* Attach Pageable region to MHI buffer so that it is
+-	 * included as part of pageable region in dumps
+-	 */
+-	ret = mhi_update_bhie_table_for_dyn_paging(mhi_ctrl, va, pa, size);
+-	if (ret)
+-		ath11k_dbg(ab, ATH11K_DBG_QMI,
+-				"failed to add Dynamic Paging region to MHI Buffer table %d\n", ret);
+-
+-	return ret;
++	return -ENOTSUPP;
+ }
+-- 
+2.25.1
+
