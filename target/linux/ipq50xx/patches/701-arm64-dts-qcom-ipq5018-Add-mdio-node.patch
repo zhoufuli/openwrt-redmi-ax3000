@@ -1,0 +1,39 @@
+From 9903b468da397234ba48d20e2214dba40e8531e7 Mon Sep 17 00:00:00 2001
+From: hzy <hzyitc@outlook.com>
+Date: Sat, 11 Mar 2023 09:32:57 +0000
+Subject: [PATCH 1/2] arm64: dts: qcom: ipq5018: Add mdio node
+
+Signed-off-by: hzy <hzyitc@outlook.com>
+---
+ arch/arm64/boot/dts/qcom/ipq5018.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/ipq5018.dtsi b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
+index c214ac5580eb..f7fc7dddf1fd 100644
+--- a/arch/arm64/boot/dts/qcom/ipq5018.dtsi
++++ b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
+@@ -251,5 +251,21 @@
+ 				nand-bus-width = <8>;
+ 			};
+ 		};
++
++		mdio0: mdio@88000 {
++			#address-cells = <1>;
++			#size-cells = <1>;
++			compatible = "qcom,ipq5018-mdio", "qcom,qca-mdio";
++			reg = <0x88000 0x64>, <0x19475C4 0x4>;
++			status = "disabled";
++		};
++
++		mdio1: mdio@90000 {
++			#address-cells = <1>;
++			#size-cells = <1>;
++			compatible = "qcom,ipq5018-mdio";
++			reg = <0x90000 0x64>;
++			status = "disabled";
++		};
+ 	};
+ };
+-- 
+2.25.1
+
