@@ -22,7 +22,7 @@ PKG_SOURCE_URL:=@KERNEL/linux/kernel/projects/backports/stable/v5.10.157/
 PKG_HASH:=1ce937c49f2b39be00768fba83e214aad6612d469c92ccd06dc17b14e6cf3a64
 endif
 
-PKG_SOURCE:=backports-$(PKG_VERSION).tar.xz
+PKG_SOURCE:=backports-$(PKG_VERSION).tar.bz2
 PKG_BUILD_DIR:=$(KERNEL_BUILD_DIR)/backports-$(PKG_VERSION)
 PKG_BUILD_PARALLEL:=1
 
