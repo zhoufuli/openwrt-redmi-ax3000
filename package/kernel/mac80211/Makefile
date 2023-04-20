@@ -497,15 +497,15 @@ ifneq ($(CONFIG_TARGET_ipq50xx),)
   endef
   $(eval $(call Download,ath-kernel))
 
-  $(DL_DIR)/$(PKG_SOURCE): $(DL_DIR)/backports-source-v5.10-rc6-1.tar.xz
-  $(DL_DIR)/$(PKG_SOURCE): $(DL_DIR)/ath-kernel-20210222.tar.xz
+  $(DL_DIR)/$(PKG_SOURCE): $(DL_DIR)/backports-source-v5.10-rc6-1.tar.gz
+  $(DL_DIR)/$(PKG_SOURCE): $(DL_DIR)/ath-kernel-202212221714.tar.gz
   define DownloadMethod/generate-backports
 	mkdir -p $(TMP_DIR)/dl && \
 	cd $(TMP_DIR)/dl && \
 	rm -rf $(SUBDIR) backports-source ath-kernel && \
 	mkdir -p $(SUBDIR) backports-source ath-kernel && \
 	$(HOST_TAR) -C backports-source --strip-components=1 -xJf $(DL_DIR)/backports-source-v5.10-rc6-1.tar.xz && \
-	$(HOST_TAR) -C ath-kernel --strip-components=1 -xJf $(DL_DIR)/ath-kernel-20210222.tar.xz && \
+	$(HOST_TAR) -C ath-kernel --strip-components=1 -xJf $(DL_DIR)/ath-kernel-202212221714.tar.gz && \
 	( \
 		cd $(TMP_DIR)/dl/backports-source && \
 		PATH="/sbin:${PATH}" \
