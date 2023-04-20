@@ -483,7 +483,7 @@ ifneq ($(CONFIG_TARGET_ipq50xx),)
     PROTO:=git
     URL:=git://git.kernel.org/pub/scm/linux/kernel/git/backports/backports.git
     VERSION:=3a9d70a32ea5bbc2c13370cc5cf253fce4c51d20
-    FILE:=backports-source-v5.10-rc6-1.tar.xz
+    FILE:=backports-source-v5.10-rc6-1.tar.gz
     SUBDIR:=backports-source-v5.10-rc6-1
   endef
   $(eval $(call Download,backports-source))
@@ -491,9 +491,9 @@ ifneq ($(CONFIG_TARGET_ipq50xx),)
   define Download/ath-kernel
     PROTO:=git
     URL:=https://git.codelinaro.org/clo/qsdk/kvalo/ath.git
-    VERSION:=b157d227636eb4fd9854218c4802e8dab2eadf1b
-    FILE:=ath-kernel-20210222.tar.xz
-    SUBDIR:=ath-kernel-20210222
+    VERSION:=5834aa7099b0f7c16cfc24af0aca4e065c568347
+    FILE:=ath-202212221714.tar.gz
+    SUBDIR:=ath-kernel-202212221714
   endef
   $(eval $(call Download,ath-kernel))
 
